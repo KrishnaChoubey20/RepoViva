@@ -5,7 +5,36 @@ const MODEL = process.env.OPENROUTER_MODEL || 'anthropic/claude-3.5-sonnet:beta'
 
 async function callOpenRouter(systemPrompt: string, userPrompt: string) {
     if (!OPENROUTER_API_KEY) {
-        throw new Error("OpenRouter API key is missing");
+        console.warn("OpenRouter API key is missing. Returning mock response for demo.");
+        if (systemPrompt.includes("technical interviewer asking questions")) {
+            return {
+                question: "Can you explain the architecture and data flow of this application?",
+                evidence_hint: "Think about the main components and how they communicate.",
+                internal_evidence: "Based on the mock analysis."
+            };
+        } else if (systemPrompt.includes("giving feedback on a candidate's answer")) {
+            return {
+                what_was_good: "You explained the overall concept well.",
+                missing_or_unclear: "You missed some specific details about the database layer.",
+                suggested_improvement: "Try to mention specific technologies like Supabase or Next.js.",
+                follow_up_question: "How would you optimize the database queries in the future?"
+            };
+        } else {
+            return {
+                project_summary: "This is a mocked project analysis because no OpenRouter API key was provided. It appears to be a modern web application.",
+                languages: ["TypeScript", "JavaScript"],
+                frameworks: ["React", "Next.js", "Tailwind CSS"],
+                key_files: [
+                    { path: "src/app/page.tsx", responsibility: "Main landing page" },
+                    { path: "src/lib/store.ts", responsibility: "Database and state management" }
+                ],
+                architecture_or_flow: "Client-server architecture using Next.js App Router and Supabase.",
+                uncertainties: "Specific business logic is mocked.",
+                evidence: [
+                    { claim: "Uses Next.js", file_paths: ["src/app/page.tsx"] }
+                ]
+            };
+        }
     }
 
     const response = await axios.post(
