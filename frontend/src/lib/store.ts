@@ -4,10 +4,8 @@ const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-// If we don't have keys, we fall back to an in-memory store
 export const hasSupabase = Boolean(supabaseUrl && (supabaseAnonKey || supabaseServiceKey));
 
-// Using service role key for backend operations if available to bypass RLS, otherwise use anon key
 export const supabase = hasSupabase 
     ? createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey) 
     : null;
@@ -39,7 +37,6 @@ export async function saveProject(data: any) {
             .single();
         if (error) {
             console.error('Supabase save error:', error);
-            // fallback to memory if error? No, let's just return what we have
         } else if (inserted) {
             return inserted;
         }
@@ -51,14 +48,27 @@ export async function saveProject(data: any) {
 
 export async function getProject(id: string) {
     if (hasSupabase && supabase) {
-        const { data, error } = await supabase
+        const { data } = await supabase
             .from('projects')
             .select('*')
             .eq('id', id)
             .single();
         if (data) return data;
     }
-    return inMemoryStore.projects.get(id);
+    return inMemoryStore.projects.get(id) || null;
+}
+
+export async function listProjects() {
+    if (hasSupabase && supabase) {
+        const { data } = await supabase
+            .from('projects')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (data) return data;
+    }
+    return Array.from(inMemoryStore.projects.values()).sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 }
 
 export async function createSession(projectId: string) {
@@ -70,7 +80,7 @@ export async function createSession(projectId: string) {
     };
 
     if (hasSupabase && supabase) {
-        const { data: inserted, error } = await supabase
+        const { data: inserted } = await supabase
             .from('practice_sessions')
             .insert(session)
             .select()
@@ -80,6 +90,31 @@ export async function createSession(projectId: string) {
 
     inMemoryStore.sessions.set(session.id, session);
     return session;
+}
+
+export async function getSession(id: string) {
+    if (hasSupabase && supabase) {
+        const { data } = await supabase
+            .from('practice_sessions')
+            .select('*')
+            .eq('id', id)
+            .single();
+        if (data) return data;
+    }
+    return inMemoryStore.sessions.get(id) || null;
+}
+
+export async function listSessions() {
+    if (hasSupabase && supabase) {
+        const { data } = await supabase
+            .from('practice_sessions')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (data) return data;
+    }
+    return Array.from(inMemoryStore.sessions.values()).sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 }
 
 export async function saveTurn(data: { session_id: string, question: string, evidence_json?: any }) {
@@ -132,5 +167,21 @@ export async function getTurn(turnId: string) {
             .single();
         if (data) return data;
     }
-    return inMemoryStore.turns.get(turnId);
+    return inMemoryStore.turns.get(turnId) || null;
+}
+
+export async function listTurns(sessionId?: string) {
+    if (hasSupabase && supabase) {
+        let query = supabase.from('practice_turns').select('*').order('created_at', { ascending: true });
+        if (sessionId) {
+            query = query.eq('session_id', sessionId);
+        }
+        const { data } = await query;
+        if (data) return data;
+    }
+    let turns = Array.from(inMemoryStore.turns.values());
+    if (sessionId) {
+        turns = turns.filter(t => t.session_id === sessionId);
+    }
+    return turns.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 }
