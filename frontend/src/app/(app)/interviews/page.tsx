@@ -26,11 +26,11 @@ const mockInterviews = [
 
 export default function InterviewsPage() {
   return (
-    <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-8 space-y-10 pb-20">
+    <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-8 space-y-10 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
       
       {/* Top Section */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
+        <div className="animate-in fade-in slide-in-from-left-4 duration-500 delay-150 fill-mode-both">
           <h1 className="text-3xl font-bold text-[#0F172A] mb-2">Interviews</h1>
           <p className="text-[15px] text-[#64748B] max-w-xl">
             Practice explaining the projects you actually built.
@@ -38,7 +38,7 @@ export default function InterviewsPage() {
         </div>
         <Link 
           href="/interviews/new"
-          className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-5 py-2.5 rounded-[12px] font-semibold text-[14px] transition-colors shadow-sm flex items-center gap-2 shrink-0 w-fit"
+          className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-5 py-2.5 rounded-[12px] font-semibold text-[14px] transition-all shadow-sm hover:shadow-md flex items-center gap-2 shrink-0 w-fit hover:-translate-y-0.5 animate-in fade-in slide-in-from-right-4 duration-500 delay-150 fill-mode-both"
         >
           <Play className="w-4 h-4 fill-white" /> Start Interview
         </Link>
@@ -86,7 +86,7 @@ export default function InterviewsPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {mockInterviews.map((interview) => (
-            <div key={interview.id} className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm flex flex-col justify-between">
+            <div key={interview.id} className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-default">
               
               <div className="flex items-start justify-between mb-5">
                 <div>

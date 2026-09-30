@@ -24,7 +24,7 @@ export default function ProjectAnalysisPage({ params }: { params: { id: string }
   }
 
   return (
-    <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-8 space-y-8 pb-20">
+    <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-8 space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
       
       {/* Back link */}
       <Link href="/projects" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#64748B] hover:text-[#0F172A] transition-colors">

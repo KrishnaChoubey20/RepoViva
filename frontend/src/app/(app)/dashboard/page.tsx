@@ -60,10 +60,10 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-8 space-y-7 pb-20">
+    <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-8 space-y-7 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
       
       {/* 1. Welcome Card */}
-      <section className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-8 md:p-10 shadow-sm relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+      <section className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-8 md:p-10 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
         {/* Subtle background treatment */}
         <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-transparent to-[#EEF0FF]/40 pointer-events-none" />
         
@@ -75,21 +75,21 @@ export default function Dashboard() {
           <div className="flex items-center gap-4 pt-2">
             <button 
               onClick={() => setShowAddModal(true)}
-              className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-5 py-2.5 rounded-[12px] font-semibold text-[14px] transition-colors shadow-sm flex items-center gap-2"
+              className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-5 py-2.5 rounded-[12px] font-semibold text-[14px] transition-all shadow-sm hover:shadow-md flex items-center gap-2 hover:-translate-y-0.5"
             >
               <Plus className="w-4 h-4" /> Add GitHub Repository
             </button>
-            <Link href="/projects" className="text-[#4F46E5] font-semibold text-[14px] hover:underline flex items-center gap-1.5">
+            <Link href="/projects" className="text-[#4F46E5] font-semibold text-[14px] hover:underline flex items-center gap-1.5 transition-all">
               View Projects <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
 
         {/* Right Visual */}
-        <div className="relative z-10 hidden md:block w-2/5 h-40 flex items-center justify-end pr-4">
+        <div className="relative z-10 hidden md:block w-2/5 h-40 flex items-center justify-end pr-4 group">
            {/* Soft decorative elements */}
-           <div className="absolute right-10 top-1/2 -translate-y-1/2 w-48 h-48 bg-[#EEF0FF] rounded-full blur-2xl -z-10" />
-           <div className="relative bg-white border border-[#E7E5E4] rounded-[14px] shadow-sm p-4 w-48 rotate-3 transition-transform hover:rotate-0">
+           <div className="absolute right-10 top-1/2 -translate-y-1/2 w-48 h-48 bg-[#EEF0FF] rounded-full blur-2xl -z-10 group-hover:scale-110 transition-transform duration-700" />
+           <div className="relative bg-white border border-[#E7E5E4] rounded-[14px] shadow-sm p-4 w-48 rotate-3 transition-all duration-500 group-hover:rotate-0 group-hover:scale-105 group-hover:shadow-md">
               <div className="flex items-center gap-2 mb-3">
                 <GithubIcon className="w-5 h-5 text-[#0F172A]" />
                 <div className="h-2 w-16 bg-[#EEF0FF] rounded-full" />
@@ -99,7 +99,7 @@ export default function Dashboard() {
                 <div className="h-2 w-3/4 bg-[#F8F6F1] rounded-full" />
               </div>
            </div>
-           <Sparkles className="absolute top-4 right-20 w-5 h-5 text-[#4F46E5]/40" />
+           <Sparkles className="absolute top-4 right-20 w-5 h-5 text-[#4F46E5]/40 animate-pulse" />
         </div>
       </section>
 
@@ -107,14 +107,14 @@ export default function Dashboard() {
       <section className="space-y-4">
         <div className="flex items-center justify-between px-1">
           <h2 className="text-[17px] font-semibold text-[#0F172A]">Your Projects</h2>
-          <Link href="/projects" className="text-[14px] text-[#64748B] hover:text-[#0F172A] font-medium flex items-center gap-1">
+          <Link href="/projects" className="text-[14px] text-[#64748B] hover:text-[#0F172A] font-medium flex items-center gap-1 transition-colors">
             View all <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {mockProjects.map(project => (
-            <div key={project.id} className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div key={project.id} className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-default">
               
               <div className="flex items-start gap-4 mb-5">
                 <div className="w-12 h-12 rounded-[12px] bg-[#EEF0FF] flex items-center justify-center shrink-0">
@@ -167,7 +167,7 @@ export default function Dashboard() {
       <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
         
         {/* Interview Readiness */}
-        <div className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm flex flex-col justify-between">
+        <div className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
           <h2 className="text-[15px] font-semibold text-[#0F172A] mb-5">Interview Readiness</h2>
           <div className="flex items-center gap-5 flex-1">
             <div className="relative w-[72px] h-[72px] shrink-0">
@@ -192,7 +192,7 @@ export default function Dashboard() {
         </div>
 
         {/* Continue Practice */}
-        <div className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm flex flex-col justify-between">
+        <div className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
           <h2 className="text-[15px] font-semibold text-[#0F172A] mb-5">Continue where you left off</h2>
           <div className="flex items-start gap-4 flex-1">
             <div className="w-10 h-10 rounded-[10px] bg-[#EEF0FF] flex items-center justify-center shrink-0">

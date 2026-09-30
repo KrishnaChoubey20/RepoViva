@@ -5,10 +5,10 @@ import Link from 'next/link';
 
 export default function PracticePage() {
   return (
-    <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-8 space-y-10 pb-20">
+    <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-8 space-y-10 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
       
       {/* Top Section */}
-      <div>
+      <div className="animate-in fade-in slide-in-from-left-4 duration-500 delay-150 fill-mode-both">
         <h1 className="text-3xl font-bold text-[#0F172A] mb-2">Practice</h1>
         <p className="text-[15px] text-[#64748B] max-w-xl">
           Strengthen the areas where you need more confidence.

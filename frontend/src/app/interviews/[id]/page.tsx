@@ -33,7 +33,7 @@ export default function LiveInterviewPage({ params }: { params: { id: string } }
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col max-w-[800px] mx-auto w-full space-y-8">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col max-w-[800px] mx-auto w-full space-y-8 animate-in fade-in zoom-in-95 duration-700">
         
         {/* Question */}
         <section className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-8 md:p-10 shadow-sm text-center">

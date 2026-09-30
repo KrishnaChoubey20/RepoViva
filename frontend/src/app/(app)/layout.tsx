@@ -80,17 +80,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           <div className="flex items-center gap-5 ml-auto">
-            <div className="hidden sm:flex items-center gap-2 bg-[#F8F6F1] text-[#0F172A] px-3 py-1.5 rounded-full text-xs font-semibold border border-[#E7E5E4]">
+            <div className="hidden sm:flex items-center gap-2 bg-[#F8F6F1] text-[#0F172A] px-3 py-1.5 rounded-full text-[13px] font-semibold border border-[#E7E5E4]">
               <div className="w-2 h-2 rounded-full bg-[#22C55E]" />
               Free Plan
             </div>
             
-            <button className="w-10 h-10 rounded-full border border-[#E7E5E4] text-[#64748B] flex items-center justify-center hover:bg-[#F8F6F1] transition-colors bg-[#FFFFFF]">
-              <Bell className="w-5 h-5" />
-            </button>
-            
-            <div className="flex items-center cursor-pointer">
-              <div className="w-9 h-9 bg-[url('https://i.pravatar.cc/100?img=11')] bg-cover bg-center rounded-full shadow-sm border border-[#E7E5E4]" />
+            <div className="relative group flex flex-col items-end cursor-pointer">
+              <div className="w-9 h-9 bg-[url('https://i.pravatar.cc/100?img=11')] bg-cover bg-center rounded-full shadow-sm border border-[#E7E5E4] transition-all group-hover:ring-2 group-hover:ring-[#4F46E5] group-hover:ring-offset-2 group-hover:ring-offset-[#FFFFFF]" />
+              
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 top-9 pt-3 w-48 hidden group-hover:block z-50">
+                <div className="bg-white border border-[#E7E5E4] rounded-[12px] shadow-lg py-1 animate-in slide-in-from-top-2 duration-200">
+                  <div className="px-4 py-3 border-b border-[#E7E5E4] mb-1">
+                    <p className="text-[14px] font-semibold text-[#0F172A]">Krishna</p>
+                    <p className="text-[12px] text-[#64748B]">krishna@example.com</p>
+                  </div>
+                  <Link href="/settings" className="block px-4 py-2 text-[13px] font-medium text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8F6F1] transition-colors">
+                    Profile Settings
+                  </Link>
+                  <button className="w-full text-left px-4 py-2 text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 mt-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Sign Out
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </header>
