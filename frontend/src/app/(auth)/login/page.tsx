@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Loader2 } from 'lucide-react'
+import { Loader2, ArrowLeft } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -28,7 +29,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8F6F1] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#F8F6F1] p-4 relative">
+      <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#64748B] hover:text-[#0F172A] font-medium transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back to Home
+      </Link>
+      
       <div className="bg-white border border-[#E7E5E4] rounded-[18px] p-8 md:p-10 shadow-sm w-full max-w-[440px] text-center animate-in fade-in zoom-in-95 duration-500">
         
         <div className="mb-8 flex justify-center">
