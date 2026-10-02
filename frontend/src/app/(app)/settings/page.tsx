@@ -1,8 +1,40 @@
 "use client";
 
-import { User, Bell, Shield, Sliders, LogOut } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { User, LogOut, Loader2 } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function getUser() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    }
+    getUser();
+  }, []);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#4F46E5]" />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-[800px] mx-auto px-4 md:px-8 py-8 space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
       
@@ -24,16 +56,23 @@ export default function SettingsPage() {
           
           <div className="space-y-5 max-w-sm">
             <div className="flex items-center gap-4 mb-2">
-              <div className="w-16 h-16 bg-[url('https://i.pravatar.cc/100?img=11')] bg-cover bg-center rounded-full border border-[#E7E5E4]" />
-              <button className="text-[#4F46E5] text-[13px] font-semibold hover:underline">Change Avatar</button>
+              {user?.user_metadata?.avatar_url ? (
+                <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-16 h-16 rounded-full border border-[#E7E5E4]" />
+              ) : (
+                <div className="w-16 h-16 bg-[#EEF0FF] rounded-full border border-[#E7E5E4] flex items-center justify-center">
+                  <User className="w-6 h-6 text-[#4F46E5]" />
+                </div>
+              )}
+              <div className="text-[13px] text-[#64748B]">Logged in via GitHub</div>
             </div>
             
             <div className="space-y-1.5">
               <label className="text-[13px] font-semibold text-[#0F172A]">Name</label>
               <input 
                 type="text" 
-                defaultValue="Krishna Choubey"
-                className="w-full bg-[#F8F6F1] border border-[#E7E5E4] rounded-[10px] px-3 py-2 text-[#0F172A] text-[14px] focus:outline-none focus:border-[#4F46E5]"
+                value={user?.user_metadata?.full_name || user?.user_metadata?.user_name || ''}
+                readOnly
+                className="w-full bg-[#F8F6F1] border border-[#E7E5E4] rounded-[10px] px-3 py-2 text-[#64748B] text-[14px] focus:outline-none cursor-not-allowed"
               />
             </div>
             
@@ -41,100 +80,24 @@ export default function SettingsPage() {
               <label className="text-[13px] font-semibold text-[#0F172A]">Email</label>
               <input 
                 type="email" 
-                defaultValue="krishna@example.com"
-                className="w-full bg-[#F8F6F1] border border-[#E7E5E4] rounded-[10px] px-3 py-2 text-[#0F172A] text-[14px] focus:outline-none focus:border-[#4F46E5]"
+                value={user?.email || ''}
+                readOnly
+                className="w-full bg-[#F8F6F1] border border-[#E7E5E4] rounded-[10px] px-3 py-2 text-[#64748B] text-[14px] focus:outline-none cursor-not-allowed"
               />
             </div>
-            
-            <button className="bg-[#4F46E5] text-white hover:bg-[#4338CA] px-5 py-2.5 rounded-[10px] text-[13px] font-semibold transition-colors mt-2">
-              Save Changes
-            </button>
-          </div>
-        </section>
-
-        {/* Interview Preferences */}
-        <section className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm">
-          <h2 className="text-[16px] font-semibold text-[#0F172A] flex items-center gap-2 mb-6 border-b border-[#E7E5E4] pb-4">
-            <Sliders className="w-4 h-4 text-[#4F46E5]" /> Interview Preferences
-          </h2>
-          
-          <div className="space-y-5 max-w-sm">
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-semibold text-[#0F172A]">Interview style</label>
-              <select className="w-full bg-[#F8F6F1] border border-[#E7E5E4] rounded-[10px] px-3 py-2.5 text-[#0F172A] text-[14px] focus:outline-none focus:border-[#4F46E5] appearance-none font-medium">
-                <option>Friendly</option>
-                <option selected>Professional</option>
-                <option>Strict</option>
-              </select>
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-semibold text-[#0F172A]">Default difficulty</label>
-              <select className="w-full bg-[#F8F6F1] border border-[#E7E5E4] rounded-[10px] px-3 py-2.5 text-[#0F172A] text-[14px] focus:outline-none focus:border-[#4F46E5] appearance-none font-medium">
-                <option>Beginner</option>
-                <option selected>Intermediate</option>
-                <option>Advanced</option>
-              </select>
-            </div>
-          </div>
-        </section>
-
-        {/* Notifications */}
-        <section className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm">
-          <h2 className="text-[16px] font-semibold text-[#0F172A] flex items-center gap-2 mb-6 border-b border-[#E7E5E4] pb-4">
-            <Bell className="w-4 h-4 text-[#4F46E5]" /> Notifications
-          </h2>
-          
-          <div className="space-y-4 max-w-sm">
-            <label className="flex items-center justify-between cursor-pointer group">
-              <span className="text-[14px] text-[#0F172A] font-medium">Interview reminders</span>
-              <div className="relative">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-10 h-6 bg-[#E7E5E4] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#4F46E5]"></div>
-              </div>
-            </label>
-            
-            <label className="flex items-center justify-between cursor-pointer group">
-              <span className="text-[14px] text-[#0F172A] font-medium">Practice recommendations</span>
-              <div className="relative">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-10 h-6 bg-[#E7E5E4] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#4F46E5]"></div>
-              </div>
-            </label>
-            
-            <label className="flex items-center justify-between cursor-pointer group">
-              <span className="text-[14px] text-[#0F172A] font-medium">Project analysis completed</span>
-              <div className="relative">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-10 h-6 bg-[#E7E5E4] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#4F46E5]"></div>
-              </div>
-            </label>
-          </div>
-        </section>
-
-        {/* Privacy */}
-        <section className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm">
-          <h2 className="text-[16px] font-semibold text-[#0F172A] flex items-center gap-2 mb-3 border-b border-[#E7E5E4] pb-4">
-            <Shield className="w-4 h-4 text-[#4F46E5]" /> Privacy
-          </h2>
-          <p className="text-[13px] text-[#64748B] mb-5">
-            Manage how RepoViva handles your project analysis data.
-          </p>
-          
-          <div className="space-x-3">
-            <button className="bg-[#FFFFFF] border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-[10px] text-[13px] font-semibold transition-colors">
-              Delete project data
-            </button>
-            <button className="bg-[#FFFFFF] border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-[10px] text-[13px] font-semibold transition-colors">
-              Delete interview history
-            </button>
           </div>
         </section>
 
         {/* Account */}
-        <section className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm">
-          <h2 className="text-[16px] font-semibold text-[#0F172A] mb-5">Account</h2>
-          <button className="flex items-center gap-2 text-[#64748B] hover:text-[#0F172A] text-[14px] font-semibold transition-colors">
+        <section className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-[18px] p-6 shadow-sm flex items-center justify-between">
+          <div>
+            <h2 className="text-[16px] font-semibold text-[#0F172A] mb-1">Sign Out</h2>
+            <p className="text-[13px] text-[#64748B]">Sign out of your RepoViva account.</p>
+          </div>
+          <button 
+            onClick={handleSignOut}
+            className="flex items-center gap-2 bg-[#F8F6F1] hover:bg-[#E7E5E4] text-[#0F172A] px-4 py-2 rounded-[10px] text-[13px] font-semibold transition-colors"
+          >
             <LogOut className="w-4 h-4" /> Sign out
           </button>
         </section>

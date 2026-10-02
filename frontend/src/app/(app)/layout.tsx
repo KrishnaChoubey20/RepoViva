@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
-  Home, Folder, Mic, BookOpen, Settings
+  Home, Folder, Mic, BookOpen, Settings, Bot
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
@@ -42,6 +42,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: 'Projects', href: '/projects', icon: Folder },
     { name: 'Interviews', href: '/interviews', icon: Mic },
     { name: 'Practice', href: '/practice', icon: BookOpen },
+    { name: 'Assistant', href: '/assistant', icon: Bot },
   ];
 
   return (
@@ -108,10 +109,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           <div className="flex items-center gap-5 ml-auto">
-            <div className="hidden sm:flex items-center gap-2 bg-[#F8F6F1] text-[#0F172A] px-3 py-1.5 rounded-full text-[13px] font-semibold border border-[#E7E5E4]">
-              <div className="w-2 h-2 rounded-full bg-[#22C55E]" />
-              Free Plan
-            </div>
+
             
             <div className="relative group flex flex-col items-end cursor-pointer">
               <div 

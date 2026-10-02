@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/server';
 
 export async function POST(req: NextRequest) {
     try {
-        const supabase = createClient();
+        const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
 
         if (!user) {
@@ -24,12 +24,34 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Invalid GitHub repository URL' }, { status: 400 });
         }
 
+        // Check if project exists for user
+        const { data: existingProject } = await supabase
+            .from('projects')
+            .select('id, repo_sha, analysis_json')
+            .eq('user_id', user.id)
+            .eq('repo_owner', repoInfo.owner)
+            .eq('repo_name', repoInfo.repo)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
         // Fetch from GitHub
         let repoData;
         try {
             repoData = await fetchRepositoryData(repoInfo.owner, repoInfo.repo);
         } catch (err: any) {
             return NextResponse.json({ error: 'Failed to retrieve repository. Ensure it is public and exists.' }, { status: 404 });
+        }
+
+        const currentSha = repoData.metadata.commit_sha;
+
+        // If repository has not changed since last analysis
+        if (existingProject && existingProject.repo_sha === currentSha && existingProject.analysis_json) {
+            return NextResponse.json({
+                project_id: existingProject.id,
+                analysis: existingProject.analysis_json,
+                message: "Your repository has not changed since the last analysis."
+            });
         }
 
         // Analyze with OpenRouter
@@ -50,6 +72,8 @@ export async function POST(req: NextRequest) {
                 repo_name: repoInfo.repo,
                 name: repoData.metadata.name,
                 description: repoData.metadata.description,
+                default_branch: repoData.metadata.default_branch,
+                repo_sha: currentSha,
                 analysis_status: 'completed',
                 analysis_json: analysis
             })
@@ -82,7 +106,8 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({
             project_id: project.id,
-            analysis: analysis
+            analysis: analysis,
+            message: existingProject ? "Repository changes detected. Analysis updated." : "Repository analyzed successfully."
         });
 
     } catch (err: any) {

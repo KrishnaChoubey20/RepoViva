@@ -51,19 +51,30 @@ export async function fetchRepositoryData(owner: string, repo: string) {
     const metaRes = await axios.get(`https://api.github.com/repos/${owner}/${repo}`, { headers });
     const metadata = metaRes.data;
 
-    // 2. Fetch file tree
+    // 2. Fetch default branch info to get commit SHA
     const defaultBranch = metadata.default_branch;
-    const treeRes = await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/trees/${defaultBranch}?recursive=1`, { headers });
+    const branchRes = await axios.get(`https://api.github.com/repos/${owner}/${repo}/branches/${defaultBranch}`, { headers });
+    const commitSha = branchRes.data.commit.sha;
+
+    // 3. Fetch file tree
+    const treeRes = await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/trees/${commitSha}?recursive=1`, { headers });
     const tree = treeRes.data.tree;
 
     // Filter files
     let selectedFiles = [];
     let totalSize = 0;
 
-    // Sort to prioritize README and important files? 
-    // We'll just take them as they come, but prioritize root files or specific names if needed.
-    // For MVP, simple iteration is fine.
-    for (const item of tree) {
+    // Prioritize important root files (package.json, tsconfig.json, etc.)
+    const PRIORITY_FILES = new Set(['package.json', 'tsconfig.json', 'README.md', 'next.config.js', 'next.config.ts']);
+    
+    // Sort tree so priority files come first
+    const sortedTree = [...tree].sort((a, b) => {
+        const aPriority = PRIORITY_FILES.has(a.path.split('/').pop() || '') ? -1 : 1;
+        const bPriority = PRIORITY_FILES.has(b.path.split('/').pop() || '') ? -1 : 1;
+        return aPriority - bPriority;
+    });
+
+    for (const item of sortedTree) {
         if (item.type !== 'blob') continue;
         
         const pathParts = item.path.split('/');
@@ -85,17 +96,15 @@ export async function fetchRepositoryData(owner: string, repo: string) {
         selectedFiles.push(item);
     }
 
-    // Sort to prioritize likely source code, package.json, etc. 
-    // Just limit to MAX_FILES
     selectedFiles = selectedFiles.slice(0, MAX_FILES);
 
     const fileContents: Record<string, string> = {};
 
-    // 3. Fetch file contents
+    // 4. Fetch file contents
     for (const file of selectedFiles) {
         if (totalSize + file.size > MAX_TOTAL_SIZE_BYTES) break;
         try {
-            const contentRes = await axios.get(`https://api.github.com/repos/${owner}/${repo}/contents/${file.path}`, { headers });
+            const contentRes = await axios.get(`https://api.github.com/repos/${owner}/${repo}/contents/${file.path}?ref=${commitSha}`, { headers });
             if (contentRes.data.content) {
                 const content = Buffer.from(contentRes.data.content, 'base64').toString('utf-8');
                 fileContents[file.path] = content;
@@ -111,7 +120,9 @@ export async function fetchRepositoryData(owner: string, repo: string) {
             name: metadata.name,
             description: metadata.description,
             stars: metadata.stargazers_count,
-            language: metadata.language
+            language: metadata.language,
+            default_branch: defaultBranch,
+            commit_sha: commitSha
         },
         files: fileContents
     };

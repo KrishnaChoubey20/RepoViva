@@ -8,12 +8,7 @@ import {
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 
-const mockRecentActivity = [
-  {
-    label: "Logged in via GitHub",
-    time: "Just now"
-  }
-];
+
 
 export default function Dashboard() {
   const router = useRouter();
